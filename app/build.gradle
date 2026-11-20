@@ -1,4 +1,15 @@
 plugins { id 'com.android.application' }
+
+// Secrets are supplied locally; no signing key/password is committed.
+def releaseCredentials = [
+    storeFile: providers.environmentVariable('ISKRIO_KEYSTORE_FILE').orNull,
+    storePassword: providers.environmentVariable('ISKRIO_STORE_PASSWORD').orNull,
+    keyAlias: providers.environmentVariable('ISKRIO_KEY_ALIAS').orNull,
+    keyPassword: providers.environmentVariable('ISKRIO_KEY_PASSWORD').orNull
+]
+def hasReleaseCredentials = releaseCredentials.values().every { it != null && !it.isBlank() }
+def hasStudioSigning = providers.gradleProperty('android.injected.signing.store.file').isPresent()
+
 android {
     namespace 'sk.iskrio.studio'
     compileSdk 37
@@ -8,12 +19,31 @@ android {
         testInstrumentationRunner 'sk.iskrio.studio.OfflineMediaTest'
         minSdk 26
         targetSdk 35
-        versionCode 19
-        versionName '2.7.0'
+        versionCode 20
+        versionName '2.7.1'
         ndk { abiFilters 'arm64-v8a', 'x86_64' }
     }
     compileOptions { coreLibraryDesugaringEnabled true; sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
-    buildTypes { release { minifyEnabled false } }
+    signingConfigs {
+        if (hasReleaseCredentials) {
+            release {
+                storeFile file(releaseCredentials.storeFile)
+                storePassword releaseCredentials.storePassword
+                keyAlias releaseCredentials.keyAlias
+                keyPassword releaseCredentials.keyPassword
+            }
+        }
+    }
+    buildTypes {
+        debug { debuggable true }
+        release {
+            debuggable false
+            jniDebuggable false
+            // Keep optimizer behavior unchanged for this packaging-only release.
+            minifyEnabled false
+            if (hasReleaseCredentials) signingConfig signingConfigs.release
+        }
+    }
 }
 
 dependencies {
@@ -28,4 +58,15 @@ dependencies {
     implementation "org.jsoup:jsoup:1.24.1"
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.json:json:20260814"
+}
+
+// Android Studio's Generate Signed APK flow supplies its own injected signing values.
+tasks.configureEach { task ->
+    if (task.name in ['packageRelease', 'bundleRelease']) {
+        task.doFirst {
+            if (!hasReleaseCredentials && !hasStudioSigning) {
+                throw new GradleException('Release signing is not configured. See docs/RELEASE.md or use Android Studio Generate Signed APK.')
+            }
+        }
+    }
 }
