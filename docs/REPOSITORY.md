@@ -21,4 +21,4 @@ Create an empty public repository named `iskrio`. Do not generate another README
 
 The ZIP is a transport copy: extract it and commit the source files, rather than committing the ZIP itself. Build outputs, SDK paths, IDE caches and signing keys are intentionally omitted. The sibling release-assets folder is for release attachments, not normal Git commits.
 
-For a binary release, build/review with the current source and your signing key, attach the APK and matching source access/native archive, and preserve notices. The provided development APK is debug-signed; do not present it as a production-signed store release. No repository, release or external upload has been created automatically.
+For a binary release, build/review with the current source and your signing key, attach the APK and matching source access/native archive, and preserve notices. The new 2.7.1 APK is release-signed with debugging disabled. The older 2.7.0 APK is debug-signed. Preserve the release key for future updates; see RELEASE.md. No repository, release or external upload has been created automatically.

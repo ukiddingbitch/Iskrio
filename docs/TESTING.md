@@ -32,3 +32,7 @@ The optional `-e audioUrl HTTPS_URL` argument exercises a public HTTPS indexed a
 ## Remaining scope
 
 Physical ARM hardware, API 26 runtime behavior, long 4K/60 exports, storage exhaustion, all codec variants, all external hosts and every edit combination are not exhaustively verified. A native decode success does not establish visual parity. Validate the changed interaction and export content as well as stream integrity.
+
+## Release packaging verification — 2.7.1
+
+Release and debug variants are built separately. Signing, manifest flags, WebView debugging behavior and a release launch are checked in addition to the existing JVM/JavaScript suites. Release packaging keeps minification disabled to preserve the tested editor/native behavior. See RELEASE.md.
