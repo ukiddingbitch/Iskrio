@@ -1,6 +1,6 @@
 <h1 align="center">Iskrio</h1>
 <p align="center"><strong>Make memes. Cut videos. Create GIFs. Keep your work local.</strong></p>
-<p align="center">Android 8.0+ · Portrait editor · Java + JavaScript · Version 2.7.0</p>
+<p align="center">Android 8.0+ · Portrait editor · Java + JavaScript · Version 2.7.1</p>
 
 Iskrio is an open-source Android creative studio with meme, image, GIF, video and audio editing in one app. Editing, playback, rendering and export run on the device. There are no ads, accounts, subscriptions, app watermarks or AI tools.
 
@@ -58,7 +58,7 @@ bash ./gradlew assembleDebug testDebugUnitTest lintDebug
 .\gradlew.bat assembleDebug testDebugUnitTest lintDebug
 ```
 
-The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. Release builds must use your own signing configuration; keep keys and passwords outside Git.
+The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. For a signed, non-debuggable release build, see [release instructions](docs/RELEASE.md). Keep keys and passwords outside Git.
 
 ## Tests
 
@@ -67,7 +67,7 @@ The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. Relea
 node tools/test-js.mjs
 ```
 
-Version 2.7.0 passed **62 JVM tests**, **7 JavaScript suites**, lint with zero errors and focused Android-emulator regressions for subtitle validation, backup restoration, rotated framing, Freeze with following audio and transformed audio detachment. The browser/editor smoke checks also passed. This is recorded verification, not a claim that every codec, device or combination works.
+Version 2.7.1 passed **62 JVM tests**, **7 JavaScript suites**, lint with zero errors and focused Android-emulator regressions for subtitle validation, backup restoration, rotated framing, Freeze with following audio and transformed audio detachment. The browser/editor smoke checks also passed. This is recorded verification, not a claim that every codec, device or combination works.
 
 See [testing](docs/TESTING.md) for scope and optional native integration checks.
 
