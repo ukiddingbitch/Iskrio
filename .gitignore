@@ -34,3 +34,9 @@ release-assets/
 *.tmp
 .DS_Store
 Thumbs.db
+
+# Private release signing / recovery material
+*.dpapi.json
+*.key
+*.pem
+*.recovery.txt
