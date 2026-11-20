@@ -1,0 +1,18 @@
+package sk.iskrio.studio;
+import android.content.Context;
+import android.graphics.*;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.webkit.*;
+import org.json.*;
+import java.io.*;
+import java.util.*;
+import java.util.function.BooleanSupplier;
+
+/** Serial, disposable paused-frame reads avoid a decoder per video layer. */
+final class StudioTrackFrames {
+ private static File root(Context c){return new File(c.getCacheDir(),"track-frames");}
+ static JSONArray read(Context c,JSONArray items,BooleanSupplier cancelled)throws Exception {if(items.length()>20)throw new IOException("Too many preview layers.");File dir=root(c);if(!dir.exists()&&!dir.mkdirs())throw new IOException();JSONArray result=new JSONArray();for(int i=0;i<items.length();i++){if(cancelled.getAsBoolean())return result;JSONObject item=items.getJSONObject(i);String key=item.getString("key");if(key.length()>240)throw new IOException("Invalid preview key.");long ms=item.getLong("timeMs");if(ms<0||ms>MediaLimits.VIDEO_DURATION_MS)throw new IOException("Invalid preview time.");File source=VideoStore.resolve(c,item.getString("source"));MediaMetadataRetriever reader=new MediaMetadataRetriever();Bitmap bitmap=null;try{reader.setDataSource(source.getAbsolutePath());int w=Integer.parseInt(reader.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)),h=Integer.parseInt(reader.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));if(w<1||h<1||w>4096||h>4096)continue;float scale=Math.min(1,720f/Math.max(w,h));bitmap=android.os.Build.VERSION.SDK_INT>=27?reader.getScaledFrameAtTime(ms*1000,MediaMetadataRetriever.OPTION_CLOSEST,Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale))):reader.getFrameAtTime(ms*1000,MediaMetadataRetriever.OPTION_CLOSEST);if(bitmap==null)continue;if(Math.max(bitmap.getWidth(),bitmap.getHeight())>720){float factor=720f/Math.max(bitmap.getWidth(),bitmap.getHeight());Bitmap small=Bitmap.createScaledBitmap(bitmap,Math.max(1,Math.round(bitmap.getWidth()*factor)),Math.max(1,Math.round(bitmap.getHeight()*factor)),true);if(small!=bitmap)bitmap.recycle();bitmap=small;}if(cancelled.getAsBoolean())return result;File out=new File(dir,UUID.randomUUID()+".jpg");try(OutputStream stream=new FileOutputStream(out)){bitmap.compress(Bitmap.CompressFormat.JPEG,85,stream);}result.put(new JSONObject().put("key",key).put("src",VideoStore.ORIGIN+"/track-frames/"+out.getName()));}catch(Exception ignored){}finally{if(bitmap!=null)bitmap.recycle();reader.release();}}cleanup(c,false);return result;}
+ static void cleanup(Context c,boolean all){File[] files=root(c).listFiles();if(files==null)return;Arrays.sort(files,Comparator.comparingLong(File::lastModified));long bytes=0;for(File f:files)bytes+=f.length();for(int i=0;i<files.length;i++){File f=files[i];if(all||i<files.length-128||bytes>64L*1024*1024||System.currentTimeMillis()-f.lastModified()>24L*3600*1000){long n=f.length();if(f.delete())bytes-=n;}}}
+ static WebResourceResponse response(Context c,WebResourceRequest request)throws IOException {Uri u=request.getUrl();String p=u.getPath();if(!"https".equals(u.getScheme())||!"app.iskrio.local".equals(u.getHost())||u.getPort()!=-1||u.getQuery()!=null||u.getFragment()!=null||p==null||!p.matches("/track-frames/[0-9a-f-]{36}\\.jpg"))throw new IOException("Invalid preview frame.");File dir=root(c).getCanonicalFile(),file=new File(dir,p.substring("/track-frames/".length())).getCanonicalFile();if(!file.getParentFile().equals(dir)||!file.isFile())throw new IOException("Preview frame expired.");return new WebResourceResponse("image/jpeg",null,200,"OK",Collections.singletonMap("Cache-Control","no-store"),new FileInputStream(file));}
+}

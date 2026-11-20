@@ -1,0 +1,31 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'sk.iskrio.studio'
+    compileSdk 37
+    buildToolsVersion '36.0.0'
+    defaultConfig {
+        applicationId 'sk.iskrio.studio'
+        testInstrumentationRunner 'sk.iskrio.studio.OfflineMediaTest'
+        minSdk 26
+        targetSdk 35
+        versionCode 19
+        versionName '2.7.0'
+        ndk { abiFilters 'arm64-v8a', 'x86_64' }
+    }
+    compileOptions { coreLibraryDesugaringEnabled true; sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    buildTypes { release { minifyEnabled false } }
+}
+
+dependencies {
+    implementation "dev.ffmpegkit-maintained:ffmpeg-kit-full-gpl:8.1.9"
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs_nio:2.1.5"
+    // Select the Android API artifact explicitly so IDE imports see okhttp3 classes.
+    implementation "com.squareup.okhttp3:okhttp-android:5.5.1"
+    implementation "pl.droidsonroids.gif:android-gif-drawable:1.2.32"
+    implementation "androidx.media3:media3-inspector:1.11.1"
+    implementation "androidx.media3:media3-transformer:1.11.1"
+    implementation "androidx.media3:media3-effect:1.11.1"
+    implementation "org.jsoup:jsoup:1.24.1"
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.json:json:20260814"
+}

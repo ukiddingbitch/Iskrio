@@ -1,0 +1,12 @@
+const assert=require('assert'),C=require('../../main/assets/studio-core.js'),E=require('../../main/assets/studio-edit.js');
+const source='https://app.iskrio.local/videos/12345678-1234-1234-1234-123456789abc/source.mp4';
+const make=()=>({w:720,h:1280,bg:'#000000',layers:[],video:{clips:['a','b','c'].map(id=>C.clip({id,src:source,width:720,height:1280,durationMs:4000,hasAudio:true}))},audioTracks:[],pips:[]});
+assert.equal(E.snap(1005,[0,1000,2000],20),1000);assert.equal(E.snap(1050,[0,1000],20),1050);
+let p=make();p.audioTracks=[{atMs:4500}];p.layers=[{startMs:4200,endMs:6000,keyframes:[{timeMs:5000}]}];E.trim(p,'a','end',3000);assert.equal(p.audioTracks[0].atMs,3500);assert.equal(p.layers[0].startMs,3200);assert.equal(p.layers[0].keyframes[0].timeMs,4000);assert.equal(C.duration(p),11000);
+p=make();p.video.clips[0].locked=true;assert.throws(()=>E.trim(p,'a','start',1000),/Unlock/);assert.throws(()=>E.remove(p,['a']),/Unlock/);assert.throws(()=>E.reorder(p,['a'],2),/Unlock/);
+p=make();E.reorder(p,['a','b'],1);assert.deepEqual(p.video.clips.map(c=>c.id),['c','a','b']);E.remove(p,['a','b']);assert.equal(p.video.clips.length,1);E.remove(p,['c']);assert.equal(p.video.clips.length,0);assert.equal(p.video.tracks.length,5);
+p=make();let id=0;E.repeat(p,'a',3,true,()=>`repeat${id++}`);assert.deepEqual(p.video.clips.slice(0,3).map(c=>c.reverse),[false,true,false]);assert.equal(C.duration(p),20000);assert.throws(()=>E.repeat(p,'a',50,false,()=>''));
+p=make();const a=E.estimate(p,1080,30,'standard'),b=E.estimate(p,1080,30,'standard',0,6000);assert(Math.abs(a/2-b)<2);assert(E.estimate(p,720,30,'compact')<a);
+const style=E.textStyle({text:'Keep my words',color:'#ff0000',textPadding:20,lineHeight:1.5,x:5,id:'x'});assert.deepEqual(style,{color:'#ff0000',textPadding:20,lineHeight:1.5});p.layers=[{textBackground:'url(x)'}];assert.throws(()=>E.validate(p));p.layers=[];p.video.clips[0].region={mode:'blur',x:.2,y:.2,w:.5,h:.5,strength:15};assert(E.validate(p));p.video.clips[0].region.x=.8;assert.throws(()=>E.validate(p));p=make();p.video.clips[0].creative='movie=evil';assert.throws(()=>E.validate(p));p=make();p.video.clips[0].region={mode:'blur',x:.2,y:.2,w:.5,h:.5,strength:15};assert(!C.canDirectPreview(p));
+const keys=[{timeMs:0,x:0},{timeMs:1000,x:100,ease:'in'}];assert.equal(C.value(keys,500,'x',0),25);keys[1].ease='out';assert.equal(C.value(keys,500,'x',0),75);
+console.log('PASS snapping, ripple anchors, locked clips, group edits, repeat, export estimate, text style, region validation and easing.');

@@ -1,0 +1,11 @@
+Iskrio uses OkHttp and Okio by Square and contributors, and the Kotlin standard library by JetBrains and contributors, under Apache License 2.0. The license is included in Apache-2.0.txt. X public embed metadata field definitions were consulted through the react-tweet project by Vercel (https://github.com/vercel/react-tweet); no login credentials or third-party proxy service are used. Manrope font license is in ../fonts/OFL-Manrope.txt.
+
+Android GIF Drawable 1.2.32 by Karol Wrotniak, Droids on Roids and contributors uses the MIT license included in GIF-DRAWABLE-LICENSE.txt. The GIFLIB license is included in GIFLIB-LICENSE.txt. Its bundled GIFLIB native decoder is used for lossless original GIF frame extraction. https://github.com/koral--/android-gif-drawable
+
+AndroidX Media3 Inspector/Extractor 1.11.1 and its AndroidX/Guava runtime dependencies use Apache License 2.0 (included in Apache-2.0.txt). Copyright The Android Open Source Project, Google and respective contributors. Media3 reads local/downloaded media and exports edited local MP4 video with H.264 video, AAC audio, trim, volume and bitmap overlays. Transformer/effect 1.11.1 are included. No remote Media3 source is used. https://developer.android.com/media/media3
+
+Jsoup 1.24.1, copyright Jonathan Hedley and contributors, uses the MIT license included in JSOUP-LICENSE.txt. It parses bounded HTML strings locally; its HTTP client is not used. https://jsoup.org/
+
+Android core-library desugaring NIO support 2.1.5 includes OpenJDK-derived code under GPL version 2 with the Classpath Exception; the license is included in DESUGAR-LICENSE.txt. Source and notices: https://github.com/google/desugar_jdk_libs .
+
+FFmpegKit full-gpl 8.1.9 by FFmpegKit contributors and the ffmpegkit-maintained project, FFmpeg and enabled codec/filter libraries are included for local composition. This GPL-enabled build makes the combined distributed application GPL-3.0. Source access and build pins are documented in docs/FFMPEG-SOURCES.md; full license texts are bundled in licenses/ffmpeg. No paid API or cloud service is used.

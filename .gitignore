@@ -1,0 +1,36 @@
+# Gradle / Android Studio
+.gradle/
+**/build/
+.idea/
+*.iml
+local.properties
+.kotlin/
+.cxx/
+.externalNativeBuild/
+captures/
+
+# Signing material and local credentials
+*.jks
+*.keystore
+*.p12
+*.pfx
+key.properties
+keystore.properties
+signing.properties
+.env
+.env.*
+!.env.example
+
+# Built packages and release bundles
+*.apk
+*.aab
+*.apks
+*.xapk
+*.zip
+release-assets/
+
+# Temporary files / local logs
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
